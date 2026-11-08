@@ -8,7 +8,11 @@
     "ignore": ["firebase.json", "**/.*"],
     "headers": [
       {
-        "source": "sw.js",
+        "source": "**/*.@(js|css|html|webmanifest)",
+        "headers": [{ "key": "Cache-Control", "value": "no-cache" }]
+      },
+      {
+        "source": "/",
         "headers": [{ "key": "Cache-Control", "value": "no-cache" }]
       }
     ]

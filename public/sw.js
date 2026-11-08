@@ -2,7 +2,7 @@
    Os DADOS não passam por aqui: quem cuida deles é o cache do Firestore.
    Ao publicar uma versão nova, aumente o número abaixo. */
 
-const VERSAO = "cf-v3";
+const VERSAO = "cf-v4";
 const ARQUIVOS = [
   "./", "index.html", "manifest.webmanifest", "css/style.css",
   "js/app.js", "js/config.js", "js/firebase.js", "js/util.js", "js/dados.js", "js/formularios.js", "js/telas.js",
@@ -10,7 +10,10 @@ const ARQUIVOS = [
 ];
 
 self.addEventListener("install", e => {
-  e.waitUntil(caches.open(VERSAO).then(c => c.addAll(ARQUIVOS)).then(() => self.skipWaiting()));
+  // cache: "reload" = baixa do servidor, sem usar a cópia velha do navegador
+  e.waitUntil(caches.open(VERSAO)
+    .then(c => c.addAll(ARQUIVOS.map(u => new Request(u, { cache: "reload" }))))
+    .then(() => self.skipWaiting()));
 });
 
 self.addEventListener("activate", e => {
@@ -23,11 +26,15 @@ self.addEventListener("fetch", e => {
   const url = new URL(e.request.url);
   if (e.request.method !== "GET") return;
 
-  // Arquivos do app: tenta a internet primeiro (pega atualizações), se falhar usa a cópia
+  // Arquivos do app: tenta a internet primeiro (pega atualizações), se falhar usa a cópia.
+  // cache: "no-cache" = confere com o servidor em vez de usar a cópia do navegador (que pode ter até 1 h)
   if (url.origin === location.origin) {
     e.respondWith(
-      fetch(e.request)
-        .then(r => { const copia = r.clone(); caches.open(VERSAO).then(c => c.put(e.request, copia)); return r; })
+      fetch(e.request.url, { cache: "no-cache", credentials: "same-origin" })
+        .then(r => {
+          if (r.ok) { const copia = r.clone(); caches.open(VERSAO).then(c => c.put(e.request, copia)); }
+          return r;
+        })
         .catch(() => caches.match(e.request).then(r => r || caches.match("index.html")))
     );
     return;
