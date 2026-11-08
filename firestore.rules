@@ -1,0 +1,67 @@
+rules_version = '2';
+
+// Regras de segurança do banco.
+// - usuarios/{uid}/...  : só o próprio dono lê e escreve (gastos, entradas, fixos, compras futuras, categorias)
+// - casas/{casaId}/...  : os membros da casa (no máximo 2) leem tudo;
+//                         cada um só altera ou apaga o que ele mesmo lançou (campo "autor")
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function logado() {
+      return request.auth != null;
+    }
+    function membro(casaId) {
+      return logado()
+        && request.auth.uid in get(/databases/$(database)/documents/casas/$(casaId)).data.membros;
+    }
+
+    // ---------- Dados pessoais ----------
+    match /usuarios/{uid} {
+      allow read, write: if logado() && request.auth.uid == uid;
+
+      match /{colecao}/{docId} {
+        allow read, write: if logado() && request.auth.uid == uid;
+      }
+    }
+
+    // ---------- Casa compartilhada ----------
+    match /casas/{casaId} {
+      // Quem cria a casa entra como único membro
+      allow create: if logado()
+        && request.resource.data.membros == [request.auth.uid];
+
+      allow read: if logado() && request.auth.uid in resource.data.membros;
+
+      allow update: if logado() && (
+        // um membro pode mudar os nomes, sem mexer em quem é membro
+        (request.auth.uid in resource.data.membros
+          && request.resource.data.membros == resource.data.membros)
+        ||
+        // alguém com o código entra na casa, se ainda houver vaga (máximo 2)
+        (!(request.auth.uid in resource.data.membros)
+          && resource.data.membros.size() < 2
+          && request.resource.data.membros == resource.data.membros.concat([request.auth.uid])
+          && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['membros', 'nomes']))
+      );
+
+      allow delete: if false;
+
+      // Tipos de investimento: qualquer membro edita
+      match /tiposInvestimento/{id} {
+        allow read, write: if membro(casaId);
+      }
+
+      // Parcelamentos e investimentos: todos leem, cada um mexe só no que lançou
+      match /{colecao}/{id} {
+        allow read: if membro(casaId);
+        allow create: if membro(casaId)
+          && request.resource.data.autor == request.auth.uid;
+        allow update: if membro(casaId)
+          && resource.data.autor == request.auth.uid
+          && request.resource.data.autor == request.auth.uid;
+        allow delete: if membro(casaId)
+          && resource.data.autor == request.auth.uid;
+      }
+    }
+  }
+}

@@ -1,0 +1,19 @@
+# Cópias de segurança exportadas pelo app: têm dados financeiros reais, NUNCA vão para o GitHub
+controle-financeiro-*.json
+*backup*.json
+
+# Firebase CLI
+.firebase/
+firebase-debug.log*
+firestore-debug.log*
+ui-debug.log*
+
+# Node (se um dia usar)
+node_modules/
+npm-debug.log*
+
+# Sistema e editor
+.DS_Store
+Thumbs.db
+desktop.ini
+.vscode/
