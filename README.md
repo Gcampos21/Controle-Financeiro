@@ -1,4 +1,4 @@
-# 💰 Controle Financeiro
+# Controle Financeiro
 
 App de finanças da casa para duas pessoas, feito para usar no celular (Android e iPhone).
 Cada um controla os próprios gastos e entradas; compras parceladas no cartão e investimentos ficam visíveis para os dois.
@@ -11,7 +11,7 @@ Cada um controla os próprios gastos e entradas; compras parceladas no cartão e
 
 ---
 
-## ✨ Funcionalidades
+## Funcionalidades
 
 | Aba | O que faz |
 |---|---|
@@ -34,7 +34,7 @@ Na parte compartilhada, **só o autor** edita ou apaga. As duas pessoas ficam li
 
 ---
 
-## 🛡️ Proteção dos dados
+##  Proteção dos dados
 
 A prioridade do projeto é **não perder dados**.
 
@@ -50,7 +50,7 @@ A prioridade do projeto é **não perder dados**.
 
 ---
 
-## 🗂️ Estrutura
+## Estrutura
 
 ```
 ├── firebase.json            configuração do Hosting e do Firestore
@@ -95,7 +95,7 @@ Todo documento tem `excluido`, `criadoEm`, `criadoLocal` e `atualizadoEm`.
 
 ---
 
-## 🚀 Criar a sua cópia
+##  Criar a sua cópia
 
 Precisa de uma conta Google e do [Node.js](https://nodejs.org) (versão LTS). O plano gratuito do Firebase basta e não pede cartão.
 
@@ -127,7 +127,7 @@ O app precisa rodar por `http://` (abrir o arquivo com dois cliques não funcion
 
 ---
 
-## 📱 Instalar e primeiro acesso
+##  Instalar e primeiro acesso
 
 - **Android (Chrome):** menu ⋮ → **Instalar app**.
 - **iPhone (Safari):** Compartilhar → **Adicionar à Tela de Início**. Use sempre pelo ícone (o app da tela inicial não compartilha o login com o Safari).
@@ -140,7 +140,7 @@ O app precisa rodar por `http://` (abrir o arquivo com dois cliques não funcion
 
 ---
 
-## 🔧 Atualizar o app
+## Atualizar o app
 
 1. Faça a mudança no código.
 2. Em `public/sw.js`, aumente a versão (`cf-v1` → `cf-v2`). Sem isso, os celulares podem manter a versão antiga.
@@ -151,7 +151,7 @@ Mais detalhes, problemas comuns e como reverter uma versão: [MANUTENCAO.md](MAN
 
 ---
 
-## 📊 Limites do plano gratuito
+##  Limites do plano gratuito
 
 | Recurso | Limite (Spark) | Uso típico de uma casa |
 |---|---|---|
@@ -165,7 +165,7 @@ Não é preciso o plano pago (Blaze). Se ativar, crie um alerta de orçamento no
 
 ---
 
-## 🔑 Sobre o `config.js`
+##  Sobre o `config.js`
 
 Os valores de `firebaseConfig` (inclusive a `apiKey`) **não são senhas**: identificam o projeto e precisam estar no app para o navegador falar com o Firebase. Quem protege os dados são as regras de `firestore.rules` e o login.
 Como proteção extra, restrinja a chave no Google Cloud (APIs e serviços → Credenciais → chave do navegador → restrição por site, liberando só os domínios do app).
