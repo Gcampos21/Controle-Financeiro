@@ -14,6 +14,10 @@ export function abrirSheet(titulo, conteudo) {
 }
 export function fecharSheet() { $("sheet").hidden = true; }
 
+/* Troca o conteúdo ignorando partes condicionais vazias (undefined/false/null),
+   que o replaceChildren mostraria como texto ("undefined", "false") */
+const trocar = (el, ...filhos) => el.replaceChildren(...filhos.flat(Infinity).filter(f => f != null && f !== false));
+
 /* ---------- Peças reutilizáveis ---------- */
 
 /* opcoes: lista de [valor, rótulo] */
@@ -69,7 +73,7 @@ export function formLancamento(pre = {}, aoSalvar) {
     const g = grupo(f.tipo);
     const catObj = g !== "i" && st.cats.find(c => c.id === f.cat);
     atualizaPreview();
-    dyn.replaceChildren(
+    trocar(dyn, 
       seg([["s", "Gasto"], ["e", "Entrada"], ["inv", "Investimento"]], g === "i" ? "inv" : f.tipo, v => {
         f.tipo = v === "inv" ? "i" : v; f.cat = null; f.sub = null; desenhar();
       }),
@@ -129,7 +133,7 @@ export function formFixo() {
 
   function desenhar() {
     const catObj = st.cats.find(c => c.id === f.cat);
-    dyn.replaceChildren(
+    trocar(dyn, 
       campo("Categoria", chips(opcoesCats("s"), f.cat, x => { f.cat = x; f.sub = null; desenhar(); })),
       catObj && catObj.subs?.length > 0 &&
         campo("Detalhe", chips(catObj.subs.map(s => [s, s]), f.sub, x => { f.sub = f.sub === x ? null : x; desenhar(); })),
@@ -173,7 +177,7 @@ export function formFutura() {
   const obs = h("input", { id: "fu-obs", placeholder: "Ex.: esperar a Black Friday", maxLength: 80 });
   const err = h("div", { class: "err", role: "alert" });
   const dyn = h("div");
-  const desenhar = () => dyn.replaceChildren(
+  const desenhar = () => trocar(dyn, 
     campo("Categoria", chips(opcoesCats("s"), f.cat, x => { f.cat = x; desenhar(); })));
 
   const form = h("form", { class: "stack", autocomplete: "off" },

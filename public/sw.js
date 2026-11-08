@@ -2,7 +2,7 @@
    Os DADOS não passam por aqui: quem cuida deles é o cache do Firestore.
    Ao publicar uma versão nova, aumente o número abaixo. */
 
-const VERSAO = "cf-v2";
+const VERSAO = "cf-v3";
 const ARQUIVOS = [
   "./", "index.html", "manifest.webmanifest", "css/style.css",
   "js/app.js", "js/config.js", "js/firebase.js", "js/util.js", "js/dados.js", "js/formularios.js", "js/telas.js",
